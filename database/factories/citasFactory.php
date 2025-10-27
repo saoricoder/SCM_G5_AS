@@ -13,16 +13,13 @@ use Carbon\Carbon;
  */
 class citasFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected static array $usedSlots = [];
+
     public function definition(): array
     {
-       $fechaCita = $this->faker->dateTimeBetween('now', '+3 months');
+        $fechaCita = $this->faker->dateTimeBetween('now', '+3 months');
         $estados = ['programada', 'confirmada', 'completada', 'cancelada'];
-        $horas = ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
+        $horas = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
 
         $motivos = [
             'Consulta general',
@@ -35,11 +32,31 @@ class citasFactory extends Factory
             'Emergencia médica'
         ];
 
+        $today = Carbon::now()->format('Y-m-d');
+        $fecha = $this->faker->boolean(30) ? $today : $fechaCita->format('Y-m-d');
+
+        // Obtener un doctor existente (se supone sembrado antes)
+        $doctorId = doctores::inRandomOrder()->value('id');
+        if (!$doctorId) {
+            // Fallback: crear uno si por alguna razón no existe
+            $doctorId = doctores::factory()->create()->id;
+        }
+
+        // Seleccionar hora evitando colisiones para (doctor, fecha)
+        $slotKey = $doctorId . '|' . $fecha;
+        $hora = $this->faker->randomElement($horas);
+        $tries = 0;
+        while (isset(self::$usedSlots[$slotKey][$hora]) && $tries < 25) {
+            $hora = $this->faker->randomElement($horas);
+            $tries++;
+        }
+        self::$usedSlots[$slotKey][$hora] = true;
+
         return [
             'paciente_id' => pacientes::inRandomOrder()->first()?->id ?? pacientes::factory(),
-            'doctor_id' => doctores::inRandomOrder()->first()?->id ?? doctores::factory(),
-            'fecha_cita' => $fechaCita->format('Y-m-d'),
-            'hora_cita' => $this->faker->randomElement($horas),
+            'doctor_id' => $doctorId,
+            'fecha_cita' => $fecha,
+            'hora_cita' => $hora,
             'estado' => $this->faker->randomElement($estados),
             'motivo' => $this->faker->randomElement($motivos),
             'notas' => $this->faker->optional(0.6)->text(200),
@@ -75,6 +92,6 @@ class citasFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'fecha_cita' => $fecha,
         ]);
-    
     }
 }
+
