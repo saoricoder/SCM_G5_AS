@@ -13,7 +13,7 @@ Sistema de gestión de citas médicas desarrollado con Laravel que permite admin
 
 ### 1. Clonar el Repositorio
 ```bash
-git clone <url-del-repositorio>
+gh repo clone saoricoder/SCM_G5_AS
 cd SCM_G5_AS
 ```
 
@@ -44,7 +44,7 @@ DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=sistema_citas_medicas
 DB_USERNAME=root
-DB_PASSWORD=tu_password
+DB_PASSWORD=
 ```
 
 ### 5. Crear Base de Datos
