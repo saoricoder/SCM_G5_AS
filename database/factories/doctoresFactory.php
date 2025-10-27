@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\especialidades;
+use App\Models\especialidades; // Importación de tu modelo
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\doctores>
@@ -20,7 +20,12 @@ class doctoresFactory extends Factory
         return [
             'nombre' => $this->faker->firstName(),
             'apellido' => $this->faker->lastName(),
-            'especialidad_id' => especialidades::inRandomOrder()->first()?->id ?? especialidades::factory(),
+            
+            // >> CÓDIGO AJUSTADO <<
+            // Esto obtiene un ID existente. Es más simple y menos propenso a errores 
+            // que el uso del operador '??' al generar 100 registros.
+            'especialidad_id' => especialidades::inRandomOrder()->first()->id,
+            
             'telefono' => $this->faker->numerify('09########'),
             'email' => $this->faker->unique()->safeEmail(),
             'licencia' => 'LIC-' . $this->faker->unique()->numerify('#####'),

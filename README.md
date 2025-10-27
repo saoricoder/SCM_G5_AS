@@ -1,10 +1,24 @@
+![logo](assets/Logo-espe.png)
+
+## Arquitectura de Software (GRUPO 5)
+
+#### INTEGRANTES 
+
+- GUAMIALAMA NICOLAS
+- RODRIGUEZ BETTY 
+- VILLAMARIN VICTOR
+- DOMINGUEZ OSCAR
+- POAQUIZA MARCO
+- TENEMAZA ALANIS
+
+
 # Sistema de Citas Médicas (SCM)
 
-Sistema de gestión de citas médicas desarrollado con Laravel que permite administrar pacientes, doctores, especialidades, consultorios, citas, historiales médicos y tratamientos.
+Sistema de gestión de citas médicas desarrollado con Laravel nos permite administrar pacientes, doctores, especialidades, consultorios, citas, historiales médicos y tratamientos.
 
 ## Requisitos del Sistema
 
-- PHP >= 8.1
+- PHP >= 8.2
 - Composer
 - MySQL >= 5.7
 - Node.js >= 16.x y NPM
@@ -42,26 +56,52 @@ Editar el archivo `.env` con la configuración de tu base de datos:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=sistema_citas_medicas
+DB_DATABASE=sistemacitasmedicas
 DB_USERNAME=root
 DB_PASSWORD=
 ```
 
 ### 5. Crear Base de Datos
+
+ http://localhost/phpmyadmin
 ```sql
 mysql -u root -p
 CREATE DATABASE sistema_citas_medicas;
 exit
 ```
-
+![DB](assets/crearDB.png)
 ### 6. Ejecutar Migraciones y Seeders
 ```bash
+
+php artisan make:migration create_especialidades_table
+php artisan make:migration create_doctores_table
+php artisan make:migration create_pacientes_table
+php artisan make:migration create_consultorios_table
+php artisan make:migration create_citas_table
+php artisan make:migration create_historial_medico_table
+php artisan make:migration create_tratamientos_table
+
 # Ejecutar migraciones
 php artisan migrate:fresh
 
+
+```
+![Migra](assets/Migraciones.png)
+```bash 
+# Creacion de los Modelos
+
+php artisan make:model Especialidad
+php artisan make:model Doctor
+php artisan make:model Paciente
+php artisan make:model Consultorio
+php artisan make:model Cita
+php artisan make:model HistorialMedico
+php artisan make:model Tratamiento
 # Poblar base de datos con datos de prueba
 php artisan db:seed
 ```
+![Modelo](assets/Modelos.png)
+
 
 ### 7. Configurar Rutas API
 El proyecto incluye rutas API que están configuradas en `bootstrap/app.php`. Las rutas están disponibles en:
@@ -71,6 +111,34 @@ El proyecto incluye rutas API que están configuradas en `bootstrap/app.php`. La
 - `/api/doctores` - Gestión de doctores
 - `/api/especialidades` - Gestión de especialidades
 
+Ahora podemos probar TODAS las rutas API:
+•	http://127.0.0.1:8000/api/pacientes
+![Paciente](assets/api.Pacientes.png)
+
+![DB-Paciente](assets/Pacientes.png)
+
+•	http://127.0.0.1:8000/api/especialidades
+
+![Especialidad](assets/api.especialidades.png)
+
+![DB-Especialidades](assets/Especialidades.png)
+
+•	http://127.0.0.1:8000/api/historial-medico
+![Historial-m](assets/api.historial-medico.png)
+
+![DB-Histor-Medico](assets/Historial-medico.png)
+
+•	http://127.0.0.1:8000/api/consultorios
+
+![Consultorio](assets/api.consultorios.png)
+
+![DB-Consultorio](assets/consultorio.png)
+•	http://127.0.0.1:8000/api/tratamientos
+
+![Tratamiento](assets/api.tratamiento.png)
+
+![DB-Tratamiento](assets/Tratamiento.png)
+
 ## Ejecución del Proyecto
 
 ### Servidor de Desarrollo
@@ -79,6 +147,11 @@ php artisan serve
 ```
 
 La aplicación estará disponible en: `http://127.0.0.1:8000`
+ http://localhost:8080
+
+![web.php](assets/web.php.png)
+
+![Dashboard](assets/Dashboard.png)
 
 ### Verificar Instalación
 ```bash
@@ -155,3 +228,14 @@ composer dump-autoload
 # Verificar configuración
 php artisan config:show database
 ```
+## Clonar el Repositorio
+
+- Instalar Git: Asegúrate de tener Git instalado en tu computadora. Puedes descargarlo desde git-scm.com.
+
+- Copiar la URL: Copia la URL del repositorio: https://github.com/saoricoder/SCM_G5_AS.git.
+
+- Abrir la Terminal/Línea de Comandos: Navega hasta la carpeta en tu computadora donde quieres guardar el proyecto.
+
+- Ejecuta el siguiente comando:  
+  git clone https://github.com/saoricoder/SCM_G5_AS.git
+- Esto creará una nueva carpeta llamada SCM_G5_AS  con todos los archivos
