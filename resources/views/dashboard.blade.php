@@ -63,11 +63,18 @@ function dashboard() {
                 const citas = await citasRes.json();
                 const especialidades = await especialidadesRes.json();
 
+                // Calcular fecha local de hoy en formato YYYY-MM-DD
+                const now = new Date();
+                const hoy = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                const citasHoyCount = Array.isArray(citas)
+                    ? citas.filter(c => c && c.fecha_cita === hoy).length
+                    : 0;
+
                 this.stats = {
-                    doctores: doctores.length,
-                    pacientes: pacientes.length,
-                    citasHoy: citas.length,
-                    especialidades: especialidades.length
+                    doctores: Array.isArray(doctores) ? doctores.length : 0,
+                    pacientes: Array.isArray(pacientes) ? pacientes.length : 0,
+                    citasHoy: citasHoyCount,
+                    especialidades: Array.isArray(especialidades) ? especialidades.length : 0
                 };
             } catch (error) {
                 console.error('Error cargando estadísticas:', error);
@@ -96,18 +103,24 @@ function dashboard() {
                                 </tr>
                             </thead>
                             <tbody>
-                                ${citas.slice(0, 5).map(cita => `
+                                ${citas.slice(0, 5).map(cita => {
+                                    const paciente = cita.paciente ? `${cita.paciente.nombre ?? ''} ${cita.paciente.apellido ?? ''}` : '—';
+                                    const doctor = cita.doctor ? `Dr. ${cita.doctor.nombre ?? ''} ${cita.doctor.apellido ?? ''}` : '—';
+                                    const fecha = cita.fecha_cita ?? '';
+                                    const hora = cita.hora_cita ?? '';
+                                    const estado = cita.estado ?? '';
+                                    return `
                                     <tr class="border-b">
-                                        <td class="px-4 py-2">${cita.paciente.nombre} ${cita.paciente.apellido}</td>
-                                        <td class="px-4 py-2">Dr. ${cita.doctor.nombre} ${cita.doctor.apellido}</td>
-                                        <td class="px-4 py-2">${cita.fecha_cita} ${cita.hora_cita}</td>
+                                        <td class="px-4 py-2">${paciente}</td>
+                                        <td class="px-4 py-2">${doctor}</td>
+                                        <td class="px-4 py-2">${fecha} ${hora}</td>
                                         <td class="px-4 py-2">
                                             <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                                                ${cita.estado}
+                                                ${estado}
                                             </span>
                                         </td>
-                                    </tr>
-                                `).join('')}
+                                    </tr>`;
+                                }).join('')}
                             </tbody>
                         </table>
                     </div>

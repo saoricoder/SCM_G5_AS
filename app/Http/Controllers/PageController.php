@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\doctores;
+use App\Models\pacientes;
+use App\Models\citas;
+use App\Models\especialidades;
 
 class PageController extends Controller
 {
@@ -13,22 +17,26 @@ class PageController extends Controller
 
     public function doctores()
     {
-        return view('doctores');
+        $doctores = doctores::with('especialidad')->get();
+        return view('doctores', compact('doctores'));
     }
 
     public function pacientes()
     {
-        return view('pacientes');
+        $pacientes = pacientes::all();
+        return view('pacientes', compact('pacientes'));
     }
 
     public function citas()
     {
-        return view('citas');
+        $citas = citas::with(['paciente', 'doctor'])->orderBy('fecha_cita', 'desc')->get();
+        return view('citas', compact('citas'));
     }
 
     public function especialidades()
     {
-        return view('especialidades');
+        $especialidades = especialidades::withCount('doctores')->get();
+        return view('especialidades', compact('especialidades'));
     }
 
     public function historialMedico()
