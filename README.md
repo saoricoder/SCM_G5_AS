@@ -40,38 +40,97 @@ composer install
 npm install
 ```
 
-### 3. Configuración del Entorno
+### 3. ACTUALIZAR MIGRACIÓN DE USUARIOS
 ```bash
-# Copiar archivo de configuración
-cp .env.example .env
-
-# Generar clave de aplicación
-php artisan key:generate
+ # Campos adicionales para Citas Médicas
+            $table->date('fecha_nacimiento')->nullable();
+            $table->enum('sexo', ['Masculino', 'Femenino', 'Otro'])->nullable();
+            $table->string('numero_seguro')->nullable();
+            $table->text('historial_medico')->nullable();
+            $table->string('contacto_emergencia')->nullable();
+            $table->enum('role', ['admin', 'doctor', 'paciente', 'recepcionista'])->default('paciente');
 ```
 
-### 4. Configurar Base de Datos
+### 4. ACTUALIZAR MODELO USER
 
-Editar el archivo `.env` con la configuración de tu base de datos:
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=sistemacitasmedicas
-DB_USERNAME=root
-DB_PASSWORD=
+Editar el archivo /Models/User.php:
+```class User extends Authenticatable
+{
+    use HasApiTokens, HasFactory, Notifiable;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'fecha_nacimiento',
+        'sexo',
+        'numero_seguro',
+        'historial_medico',
+        'contacto_emergencia',
+        'role'
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'fecha_nacimiento' => 'date',
+    ];
+
+#  Relaciones según sea necesario
+    public function citasComoPaciente()
+    {
+        return $this->hasMany(Cita::class, 'paciente_id');
+    }
 ```
 
-### 5. Crear Base de Datos
+### 5.  INSTALAR LARAVEL SANCTUM
 
- http://localhost/phpmyadmin
-```sql
-mysql -u root -p
-CREATE DATABASE sistema_citas_medicas;
-exit
-```
+
+![Sanctum](image-1.png)
+
+
 ![DB](assets/crearDB.png)
+
+### CREAR CONTROLADOR DE USUARIOS API
+
+```
+Controllers/API/UserController.php
+```
+### CREAR CONTROLADOR DE AUTENTICACIÓN
+
+```
+Controllers/API/AuthController.php
+```
+### CONFIGURAR RUTAS API
+
+```
+routes/api.php
+```
+
+#### Ruta de verificación de salud del microservicio
+```
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Microservicio de Gestión de Usuarios funcionando correctamente',
+        'timestamp' => now()->toDateTimeString()
+    ]);
+});
+````
+### CREAR SEEDER PARA USUARIOS
+
+
+```
+seeders/UsersSeeder.php
+```
+
 ### 6. Ejecutar Migraciones y Seeders
 ```bash
+
 
 php artisan make:migration create_especialidades_table
 php artisan make:migration create_doctores_table
@@ -215,7 +274,6 @@ chown -R www-data:www-data storage bootstrap/cache
 ```
 
 ## Comandos Útiles
-
 ```bash
 # Limpiar caché
 php artisan cache:clear

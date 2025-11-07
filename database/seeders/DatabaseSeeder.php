@@ -9,28 +9,17 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
+    public function run()
     {
-        // Usuario de prueba (idempotente)
-        User::updateOrCreate(
-            ['email' => 'test@example.com'],
-            ['name' => 'Test User', 'password' => Hash::make('password')]
-        );
-
-        // Orden de seeders respetando dependencias
         $this->call([
+            UsersSeeder::class,
             EspecialidadesSeeder::class,
             DoctoresSeeder::class,
             PacientesSeeder::class,
-            Historial_medicoSeeder::class,
-            TratamientoSeeder::class,
             ConsultoriosSeeder::class,
+            TratamientosSeeder::class,
             CitasSeeder::class,
+            HistorialMedicoSeeder::class,
         ]);
     }
 }
