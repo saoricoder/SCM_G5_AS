@@ -4,9 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\consultorios as Consultorios;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use App\Models\Consultorio; // <<-- CORREGIDO: Línea de IMPORTACIÓN AÑADIDA
 
 class ConsultoriosSeeder extends Seeder
 {
@@ -15,6 +13,7 @@ class ConsultoriosSeeder extends Seeder
      */
     public function run(): void
     {
-        Consultorios::factory()->count(100)->create();
+        // CORRECCIÓN CLAVE: Usamos Consultorio::factory() (PascalCase, singular)
+        Consultorio::factory()->count(20)->create(); 
     }
 }

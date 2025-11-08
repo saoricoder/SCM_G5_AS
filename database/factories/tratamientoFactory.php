@@ -2,16 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\doctores;
-use App\Models\pacientes;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\historial_medico;
+// AGREGAMOS LAS IMPORTACIONES NECESARIAS (CamelCase)
+use App\Models\Paciente;
+use App\Models\HistorialMedico;
+use App\Models\Doctor;
 
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\tratamiento>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Tratamiento>
  */
-class tratamientoFactory extends Factory
+class TratamientoFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -20,51 +21,41 @@ class tratamientoFactory extends Factory
      */
     public function definition(): array
     {
-      $fechaInicio = $this->faker->dateTimeBetween('-6 months', 'now');
-        $fechaFin = $this->faker->optional(0.7)->dateTimeBetween($fechaInicio, '+6 months');
-        
         $tratamientos = [
-            'Control de Hipertensión' => 'Seguimiento y control de presión arterial',
-            'Manejo de Diabetes' => 'Control de niveles de glucosa y tratamiento',
-            'Terapia para Asma' => 'Manejo y prevención de crisis asmáticas',
-            'Tratamiento Dermatológico' => 'Cuidado de piel y control de alergias',
-            'Rehabilitación Ortopédica' => 'Recuperación post-cirugía o lesión',
-            'Terapia Psicológica' => 'Sesiones de terapia y seguimiento',
-            'Control Prenatal' => 'Seguimiento del embarazo',
-            'Tratamiento Antibiótico' => 'Administración de antibióticos para infección'
+            'Antibiótico Oral' => 'Prescripción de Amoxicilina para infección bacteriana.',
+            'Fisioterapia' => 'Sesiones de rehabilitación para lesión de rodilla.',
+            'Control de Diabetes' => 'Ajuste de dosis de Metformina y monitoreo de glucosa.',
+            'Terapia Nutricional' => 'Dieta baja en sodio para control de hipertensión.',
+            'Cirugía Menor' => 'Extracción de quiste sebáceo con anestesia local.',
+            'Vacunación' => 'Aplicación de la vacuna anual contra la gripe.',
         ];
+        
+        // Valores de estado sincronizados con la migración Tratamientos:
+        // ['pendiente', 'en_progreso', 'completado', 'cancelado']
+        $estados_validos = ['pendiente', 'en_progreso', 'completado', 'cancelado'];
 
         $nombreTratamiento = $this->faker->randomElement(array_keys($tratamientos));
-
+        
         return [
-            'paciente_id' => pacientes::inRandomOrder()->first()?->id ?? pacientes::factory(),
-            'historial_medico_id' => historial_medico::inRandomOrder()->first()?->id ?? historial_medico::factory(),
-            'doctor_id' => doctores::inRandomOrder()->first()?->id ?? doctores::factory(),
+            // Corregimos la nomenclatura (CamelCase)
+            'paciente_id' => Paciente::inRandomOrder()->first()?->id ?? Paciente::factory(), 
+            
+            // Corregimos la nomenclatura (CamelCase)
+            'historial_medico_id' => HistorialMedico::inRandomOrder()->first()?->id ?? HistorialMedico::factory(),  
+            
+            // Corregimos la nomenclatura (CamelCase)
+            'doctor_id' => Doctor::inRandomOrder()->first()?->id ?? Doctor::factory(),
+            
             'nombre_tratamiento' => $nombreTratamiento,
             'descripcion' => $tratamientos[$nombreTratamiento],
-            'fecha_inicio' => $fechaInicio->format('Y-m-d'),
-            'fecha_fin' => $fechaFin ? $fechaFin->format('Y-m-d') : null,
-            'estado' => $this->faker->randomElement(['pendiente', 'en_progreso', 'completado', 'cancelado']),
-            'created_at' => $fechaInicio,
-            'updated_at' => $this->faker->dateTimeBetween($fechaInicio, 'now'),
+            'fecha_inicio' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'fecha_fin' => $this->faker->optional(0.6)->dateTimeBetween('now', '+6 months'),
+            
+            // CORRECCIÓN CLAVE: Usamos solo los valores definidos en la migración (estado)
+            'estado' => $this->faker->randomElement($estados_validos),
+            
+            'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'updated_at' => $this->faker->dateTimeBetween('-6 months', 'now'),
         ];
-    }
-
-    public function enProgreso(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'estado' => 'en_progreso',
-            'fecha_inicio' => $this->faker->dateTimeBetween('-2 months', 'now')->format('Y-m-d'),
-            'fecha_fin' => $this->faker->dateTimeBetween('+1 month', '+3 months')->format('Y-m-d'),
-        ]);
-    }
-
-    public function completado(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'estado' => 'completado',
-            'fecha_inicio' => $this->faker->dateTimeBetween('-1 year', '-3 months')->format('Y-m-d'),
-            'fecha_fin' => $this->faker->dateTimeBetween('-3 months', '-1 month')->format('Y-m-d'),
-        ]);
     }
 }

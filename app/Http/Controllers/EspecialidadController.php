@@ -3,39 +3,78 @@
 namespace App\Http\Controllers;
 
 use App\Models\Especialidad;
-use App\Models\especialidades;
 use Illuminate\Http\Request;
 
 class EspecialidadController extends Controller
 {
     public function index()
     {
-        $especialidades = especialidades::all();
-        return response()->json($especialidades);
+        $Especialidad = Especialidad::all();
+        return response()->json($Especialidad);
     }
 
     public function store(Request $request)
     {
-        $especialidad = especialidades::create($request->all());
-        return response()->json($especialidad, 201);
+        // 1. VALIDACIÓN CLAVE: Esto detiene el Error 500 al asegurar que solo 
+        // los campos correctos van a la base de datos.
+        $validatedData = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+        ]);
+
+        // 2. CREACIÓN: Usa los datos validados.
+        try {
+            $Especialidad = Especialidad::create($validatedData);
+
+            // 3. RESPUESTA EXITOSA
+            return response()->json([
+                'success' => true,
+                'message' => 'Especialidad creada exitosamente',
+                'data' => $Especialidad
+            ], 201);
+        } catch (\Exception $e) {
+            // Manejador de errores para debug.
+            return response()->json([
+                'success' => false,
+                'message' => 'Error interno al crear la especialidad.',
+                'error_detail' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function show($id)
     {
-        $especialidad = especialidades::find($id);
-        return response()->json($especialidad);
+        $Especialidad = Especialidad::find($id);
+        if (!$Especialidad) {
+            return response()->json(['message' => 'Especialidad no encontrada'], 404);
+        }
+        return response()->json($Especialidad);
     }
 
     public function update(Request $request, $id)
     {
-        $especialidad = especialidades::find($id);
-        $especialidad->update($request->all());
-        return response()->json($especialidad);
+        $Especialidad = Especialidad::find($id);
+        if (!$Especialidad) {
+            return response()->json(['message' => 'Especialidad no encontrada'], 404);
+        }
+        
+        $validatedData = $request->validate([
+            'nombre' => 'sometimes|string|max:255',
+            'descripcion' => 'sometimes|string',
+        ]);
+
+        $Especialidad->update($validatedData);
+        return response()->json($Especialidad);
     }
 
     public function destroy($id)
     {
-        especialidades::destroy($id);
-        return response()->json(['message' => 'Especialidad eliminada']);
+        $deleted = Especialidad::destroy($id);
+
+        if (!$deleted) {
+            return response()->json(['message' => 'Especialidad no encontrada'], 404);
+        }
+        
+        return response()->json(['message' => 'Especialidad eliminada exitosamente']);
     }
 }

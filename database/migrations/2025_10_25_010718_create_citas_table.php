@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -11,24 +12,32 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Deshabilitamos temporalmente la verificación de llaves foráneas
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
         Schema::create('citas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('paciente_id')->constrained('pacientes')->onDelete('cascade');
             $table->foreignId('doctor_id')->constrained('doctores')->onDelete('cascade');
-            $table->date('fecha_cita');
-            $table->time('hora_cita');
-            $table->enum('estado', ['programada', 'confirmada', 'completada', 'cancelada'])->default('programada');
-            $table->text('motivo');
-            $table->text('notas')->nullable();
+            
+            // CORRECCIÓN CLAVE: Agregamos la clave foránea a la tabla 'consultorios'
+            $table->foreignId('consultorio_id')->constrained('consultorios')->onDelete('cascade'); 
+            
+            $table->date('fecha');
+            $table->time('hora');
+            $table->string('motivo', 255);
+            $table->enum('estado', ['Pendiente', 'Confirmada', 'Cancelada', 'Completada'])->default('Pendiente');
+            $table->text('notas_internas')->nullable();
             $table->timestamps();
 
             $table->index('paciente_id');
             $table->index('doctor_id');
-            $table->index(['fecha_cita', 'hora_cita']);
-            
-            // Evitar citas duplicadas para el mismo doctor en misma fecha/hora
-            $table->unique(['doctor_id', 'fecha_cita', 'hora_cita']);
+            $table->index('consultorio_id'); // Índice para la nueva columna
+            $table->index('estado');
         });
+
+        // Volvemos a habilitar la verificación
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
     /**

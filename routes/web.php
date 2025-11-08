@@ -9,3 +9,12 @@ Route::get('/pacientes', [PageController::class, 'pacientes'])->name('pacientes'
 Route::get('/citas', [PageController::class, 'citas'])->name('citas');
 Route::get('/especialidades', [PageController::class, 'especialidades'])->name('especialidades');
 Route::get('/historial-medico', [PageController::class, 'historialMedico'])->name('historial-medico');
+
+Route::get('/test-db', function () {
+    try {
+        DB::connection()->getPdo();
+        return "Conexión exitosa a la base de datos!";
+    } catch (\Exception $e) {
+        return "Error de conexión: " . $e->getMessage();
+    }
+});

@@ -120,136 +120,58 @@ Route::get('/health', function () {
         'timestamp' => now()->toDateTimeString()
     ]);
 });
-````
+```
+
+
 ### CREAR SEEDER PARA USUARIOS
 
 
 ```
 seeders/UsersSeeder.php
 ```
+### Autenticación (Laravel Sanctum)
+rutas seguras requieren un Bearer Token obtenido después de un login exitoso
+![alt text](image.png)
+![](assets\registro1.png)
 
-### 6. Ejecutar Migraciones y Seeders
-```bash
-
-
-php artisan make:migration create_especialidades_table
-php artisan make:migration create_doctores_table
-php artisan make:migration create_pacientes_table
-php artisan make:migration create_consultorios_table
-php artisan make:migration create_citas_table
-php artisan make:migration create_historial_medico_table
-php artisan make:migration create_tratamientos_table
-
-# Ejecutar migraciones
-php artisan migrate:fresh
+![Sanctum](assets/login.png)
 
 
+
+### Estructura de Rutas y Roles
+La API está diseñada con diferentes niveles de acceso:
+
+
+### Rutas de Administrador (role:admin)
+
+![alt text](image-1.png)
+
+
+### Rutas de Paciente (role:paciente)
+
+![alt text](image-2.png)
+
+### Dependencias Clave
 ```
-![Migra](assets/Migraciones.png)
-```bash 
-# Creacion de los Modelos
+Laravel Framework: Base del microservicio.
 
-php artisan make:model Especialidad
-php artisan make:model Doctor
-php artisan make:model Paciente
-php artisan make:model Consultorio
-php artisan make:model Cita
-php artisan make:model HistorialMedico
-php artisan make:model Tratamiento
-# Poblar base de datos con datos de prueba
-php artisan db:seed
-```
-![Modelo](assets/Modelos.png)
+Laravel Sanctum: Manejo de la autenticación de tokens API.
 
-
-### 7. Configurar Rutas API
-El proyecto incluye rutas API que están configuradas en `bootstrap/app.php`. Las rutas están disponibles en:
-- `/api/stats` - Estadísticas del dashboard
-- `/api/citas` - Gestión de citas
-- `/api/pacientes` - Gestión de pacientes
-- `/api/doctores` - Gestión de doctores
-- `/api/especialidades` - Gestión de especialidades
-
-Ahora podemos probar TODAS las rutas API:
-•	http://127.0.0.1:8000/api/pacientes
-![Paciente](assets/api.Pacientes.png)
-
-![DB-Paciente](assets/Pacientes.png)
-
-•	http://127.0.0.1:8000/api/especialidades
-
-![Especialidad](assets/api.especialidades.png)
-
-![DB-Especialidades](assets/Especialidades.png)
-
-•	http://127.0.0.1:8000/api/historial-medico
-![Historial-m](assets/api.historial-medico.png)
-
-![DB-Histor-Medico](assets/Historial-medico.png)
-
-•	http://127.0.0.1:8000/api/consultorios
-
-![Consultorio](assets/api.consultorios.png)
-
-![DB-Consultorio](assets/consultorio.png)
-•	http://127.0.0.1:8000/api/tratamientos
-
-![Tratamiento](assets/api.tratamiento.png)
-
-![DB-Tratamiento](assets/Tratamiento.png)
-
-## Ejecución del Proyecto
-
-### Servidor de Desarrollo
-```bash
-php artisan serve
+MySQL: Base de datos relacional.
 ```
 
-La aplicación estará disponible en: `http://127.0.0.1:8000`
- http://localhost:8080
+![](assets/Token.png)
+![alt text](image-3.png)
 
-![web.php](assets/web.php.png)
+![](registro.png)
 
-![Dashboard](assets/Dashboard.png)
 
-### Verificar Instalación
-```bash
-# Listar rutas disponibles
-php artisan route:list
 
-# Verificar estado de la base de datos
-php artisan migrate:status
-```
 
-## Estructura de Rutas Principales
 
-### Rutas Web
-- `/` - Dashboard principal
-- `/pacientes` - Gestión de pacientes
-- `/doctores` - Gestión de doctores
-- `/especialidades` - Gestión de especialidades
-- `/citas` - Gestión de citas
-- `/historial-medico` - Historiales médicos
+![](assets/relacional.png)
 
-### Rutas API
-- `GET /api/stats` - Estadísticas del sistema
-- `GET /api/citas` - Lista de citas
-- `GET /api/pacientes` - Lista de pacientes
-- `GET /api/doctores` - Lista de doctores
-- `GET /api/especialidades` - Lista de especialidades
-
-## Modelos del Sistema
-
-- **User** - Usuarios del sistema
-- **Pacientes** - Información de pacientes
-- **Doctores** - Información de doctores
-- **Especialidades** - Especialidades médicas
-- **Consultorios** - Consultorios disponibles
-- **Citas** - Citas médicas programadas
-- **Historial_medico** - Historiales médicos
-- **Tratamiento** - Tratamientos médicos
-
-## Solución de Problemas Comunes
+### Solución de Problemas Comunes
 
 ### Error de Rutas API no Encontradas
 Si las rutas `/api/*` devuelven 404, verificar que `bootstrap/app.php` incluya:

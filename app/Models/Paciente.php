@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 
-class pacientes extends Model
+class Paciente extends Model
 {
     use HasFactory;
 

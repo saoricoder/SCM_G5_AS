@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class citas extends Model
+// CORRECCIÓN 1: Usar PascalCase y singular
+class Cita extends Model
 {
     use HasFactory;
 
@@ -20,13 +21,15 @@ class citas extends Model
         'fecha_cita' => 'date',
     ];
 
-    public function paciente()
+    public function paciente(): BelongsTo
     {
-        return $this->belongsTo(pacientes::class);
+        // CORRECCIÓN 2: Referencia a Paciente::class (PascalCase)
+        return $this->belongsTo(Paciente::class);
     }
 
-    public function doctor()
+    public function doctor(): BelongsTo
     {
-        return $this->belongsTo(doctores::class);
+        // CORRECCIÓN 2: Referencia a Doctor::class (PascalCase)
+        return $this->belongsTo(Doctor::class);
     }
 }

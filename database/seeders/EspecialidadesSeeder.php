@@ -4,9 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\especialidades;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use App\Models\Especialidad; // <<-- AÑADIDO: Importa el modelo correctamente (PascalCase)
 
 class EspecialidadesSeeder extends Seeder
 {
@@ -15,6 +13,7 @@ class EspecialidadesSeeder extends Seeder
      */
     public function run(): void
     {
-        especialidades::factory()->count(100)->create();
+        // CORRECCIÓN CLAVE: Usamos Especialidad::factory() (PascalCase, singular)
+        Especialidad::factory()->count(10)->create(); 
     }
 }

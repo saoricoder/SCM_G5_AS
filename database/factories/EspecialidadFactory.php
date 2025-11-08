@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\especialidades>
  */
-class especialidadesFactory extends Factory
+class EspecialidadFactory extends Factory
 {
     /**
      * Define the model's default state. Faltan 100 registros
